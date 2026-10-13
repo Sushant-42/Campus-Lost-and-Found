@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: Campus Lost and Found API (Assignment 5 & 6)
+  version: 1.0.0
+  description: Web services API for managing campus lost and found items with RFC 7807 problem details, validation error aggregation, content negotiation, and caching/retries.
+servers:
+  - url: http://localhost:8000
+paths:
+  /items:
+    get:
+      summary: List and filter lost/found items
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Items retrieved successfully.
+    post:
+      summary: Report a new lost or found item
+      headers:
+        Authorization:
+          schema:
+            type: string
+          required: true
+          description: Bearer token for authentication.
+        Idempotency-Key:
+          schema:
+            type: string
+          required: false
+          description: Unique key to ensure idempotent creation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                location:
+                  type: string
+                item_type:
+                  type: string
+                  description: "lost or found"
+      responses:
+        '201':
+          description: Item reported successfully.
+          headers:
+            Location:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        '400':
+          description: Malformed request body.
+        '401':
+          description: Missing or invalid authorization token.
+        '422':
+          description: Validation error or domain refusal.
+        '429':
+          description: Rate limit exceeded.
+      options:
+        summary: CORS preflight / OPTIONS method mapping
+        responses:
+          '204':
+            description: Allowed methods returned in Allow header.
+            headers:
+              Allow:
+                schema:
+                  type: string
+  /items/{item_id}:
+    get:
+      summary: Read a single item report
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item retrieved successfully.
+          headers:
+            ETag:
+              schema:
+                type: string
+            Cache-Control:
+              schema:
+                type: string
+        '304':
+          description: Not Modified (Conditional GET match).
+        '404':
+          description: Item not found.
+    patch:
+      summary: Update item status or details
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Item updated successfully.
+        '404':
+          description: Item not found.
+        '409':
+          description: Illegal state transition conflict.
+        '412':
+          description: Precondition Failed (Conditional write mismatch).
+  /items/{item_id}/claim:
+    post:
+      summary: Claim a lost/found item (Non-CRUD sub-resource action)
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Claim submitted successfully.
+        '404':
+          description: Item not found.
+        '409':
+          description: Item already claimed or invalid state.

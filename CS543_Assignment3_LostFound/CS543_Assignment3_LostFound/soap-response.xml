@@ -1,0 +1,18 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:ver="https://verification.partner.example/wsdl">
+
+    <soapenv:Header/>
+
+    <soapenv:Body>
+        <ver:VerifyClaimResponse>
+            <ver:verificationStatus>VERIFIED</ver:verificationStatus>
+            <ver:verificationReference>PV-883104</ver:verificationReference>
+            <ver:reason>Submitted description and evidence passed partner checks.</ver:reason>
+        </ver:VerifyClaimResponse>
+    </soapenv:Body>
+
+</soapenv:Envelope>
+```

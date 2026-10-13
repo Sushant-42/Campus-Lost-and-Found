@@ -1,0 +1,96 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="https://verification.partner.example/wsdl"
+    targetNamespace="https://verification.partner.example/wsdl"
+    name="CampusLostFoundVerificationService">
+
+    <!-- 1. Data types and message structures -->
+    <types>
+        <xsd:schema
+            targetNamespace="https://verification.partner.example/wsdl"
+            elementFormDefault="qualified">
+
+            <xsd:element name="VerifyClaimRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="claimReference" type="xsd:string"/>
+                        <xsd:element name="itemDescription" type="xsd:string"/>
+                        <xsd:element name="claimantName" type="xsd:string"/>
+                        <xsd:element name="evidenceReference"
+                                     type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="VerifyClaimResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="verificationStatus" type="xsd:string"/>
+                        <xsd:element name="verificationReference" type="xsd:string"/>
+                        <xsd:element name="reason"
+                                     type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+        </xsd:schema>
+    </types>
+
+    <!-- 2. Input and output messages -->
+    <message name="VerifyClaimInput">
+        <part name="parameters" element="tns:VerifyClaimRequest"/>
+    </message>
+
+    <message name="VerifyClaimOutput">
+        <part name="parameters" element="tns:VerifyClaimResponse"/>
+    </message>
+
+    <!-- 3. Operations supported by the service -->
+    <portType name="ClaimVerificationPortType">
+        <operation name="verifyClaim">
+            <input message="tns:VerifyClaimInput"/>
+            <output message="tns:VerifyClaimOutput"/>
+        </operation>
+    </portType>
+
+    <!-- 4. SOAP communication binding -->
+    <binding name="ClaimVerificationSoapBinding"
+             type="tns:ClaimVerificationPortType">
+
+        <soap:binding
+            style="document"
+            transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="verifyClaim">
+            <soap:operation
+                soapAction="https://verification.partner.example/verifyClaim"/>
+
+            <input>
+                <soap:body use="literal"/>
+            </input>
+
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- 5. Service and endpoint -->
+    <service name="CampusLostFoundVerificationService">
+        <documentation>
+            External partner service for verifying Lost and Found claims.
+        </documentation>
+
+        <port name="ClaimVerificationSoapPort"
+              binding="tns:ClaimVerificationSoapBinding">
+            <soap:address
+                location="https://verification.partner.example/soap/claim-verification"/>
+        </port>
+    </service>
+
+</definitions>
+```

@@ -1,0 +1,64 @@
+=== D1: SUCCESS PATH (POST /items -> 201 Created) ===
+curl -i -X POST http://localhost:8000/items \
+  -H "Authorization: Bearer test-token" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Blue Wallet","description":"Leather wallet with ID","category":"Accessories","location":"Library","item_type":"lost"}'
+
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+Location: /items/a1b2c3d4
+ETag: "8f7b2c1..."
+
+{"item_id": "a1b2c3d4", "title": "Blue Wallet", "description": "Leather wallet with ID", "category": "Accessories", "location": "Library", "item_type": "lost", "status": "reported", "student_id": "anonymous"}
+
+=== D2: FAILURE PATHS ===
+1. Malformed JSON (400 Bad Request)
+curl -i -X POST http://localhost:8000/items -H "Authorization: Bearer test-token" -H "Content-Type: application/json" -d "invalid-json"
+
+HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json; charset=utf-8
+
+{"type": "https://campuslostandfound.local/errors/malformed-request", "title": "Bad Request", "status": 400, "detail": "Request body must be valid JSON object."}
+
+2. Unauthorized (401 Unauthorized)
+curl -i -X POST http://localhost:8000/items -H "Content-Type: application/json" -d '{}'
+
+HTTP/1.1 401 Unauthorized
+Content-Type: application/problem+json; charset=utf-8
+
+{"type": "https://campuslostandfound.local/errors/unauthorized", "title": "Unauthorized", "status": 401, "detail": "Missing or invalid bearer token."}
+
+3. Validation Error / Multiple Bad Fields (422 Unprocessable Entity)
+curl -i -X POST http://localhost:8000/items -H "Authorization: Bearer test-token" -H "Content-Type: application/json" -d '{"title":"","item_type":"invalid"}'
+
+HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/problem+json; charset=utf-8
+
+{"type": "https://campuslostandfound.local/errors/validation-error", "title": "Unprocessable Entity", "status": 422, "detail": "Request validation failed.", "errors": [{"field": "title", "reason": "Title is required and must be non-empty."}, {"field": "description", "reason": "Description is required."}, {"field": "category", "reason": "Category is required."}, {"field": "location", "reason": "Location is required."}, {"field": "item_type", "reason": "item_type must be either 'lost' or 'found'."}]}
+
+4. Not Found (404 Not Found)
+curl -i http://localhost:8000/items/nonexistent
+
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json; charset=utf-8
+
+{"type": "https://campuslostandfound.local/errors/item-not-found", "title": "Not Found", "status": 404, "detail": "Item nonexistent does not exist."}
+
+5. Rate Limit Exceeded (429 Too Many Requests)
+curl -i -X POST http://localhost:8000/items -H "Authorization: Bearer test-token" -H "Content-Type: application/json" -d '{"title":"Key","description":"Room key","category":"Keys","location":"Hall","item_type":"found"}'
+
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+Content-Type: application/problem+json; charset=utf-8
+
+{"type": "https://campuslostandfound.local/errors/rate-limit-exceeded", "title": "Too Many Requests", "status": 429, "detail": "Rate limit of 5 requests per 60 seconds exceeded."}
+
+=== D3: CONTENT NEGOTIATION (XML) ===
+curl -i -X GET http://localhost:8000/items/a1b2c3d4 -H "Accept: application/xml"
+
+HTTP/1.1 200 OK
+Content-Type: application/xml; charset=utf-8
+ETag: "8f7b2c1..."
+
+<?xml version='1.0' encoding='utf-8'?>
+<Item><item_id>a1b2c3d4</item_id><title>Blue Wallet</title><description>Leather wallet with ID</description><category>Accessories</category><location>Library</location><item_type>lost</item_type><status>reported</status><student_id>anonymous</student_id></Item>

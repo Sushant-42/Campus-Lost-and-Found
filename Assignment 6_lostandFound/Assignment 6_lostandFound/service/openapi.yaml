@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: Campus Lost and Found API (Assignment 6)
+  version: 1.0.0
+  description: Web services API adhering to RFC 7807 Problem Details, content negotiation, validation error aggregation, and robust status handling.
+servers:
+  - url: http://localhost:8000
+paths:
+  /items:
+    get:
+      summary: List all lost and found items
+      responses:
+        '200':
+          description: Items retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      summary: Report a new lost or found item
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                location:
+                  type: string
+                item_type:
+                  type: string
+      responses:
+        '201':
+          description: Item successfully created.
+          headers:
+            Location:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '400':
+          description: Malformed request body.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limit exceeded.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /items/{item_id}:
+    get:
+      summary: Get a single item
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: If-None-Match
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item details retrieved.
+        '304':
+          description: Not Modified.
+        '404':
+          description: Item not found.
+    patch:
+      summary: Update item status
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated successfully.
+        '404':
+          description: Not found.
+        '409':
+          description: Illegal state transition.
+        '412':
+          description: Precondition Failed (ETag mismatch).
+  /items/{item_id}/claim:
+    post:
+      summary: Claim an item
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Claimed successfully.
+        '409':
+          description: Already claimed or invalid state.
+
+components:
+  schemas:
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              reason:
+                type: string

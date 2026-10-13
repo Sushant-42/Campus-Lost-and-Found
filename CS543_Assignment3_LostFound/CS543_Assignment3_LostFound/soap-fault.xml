@@ -1,0 +1,24 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:ver="https://verification.partner.example/wsdl">
+
+    <soapenv:Header/>
+
+    <soapenv:Body>
+        <soapenv:Fault>
+            <faultcode>soapenv:Server</faultcode>
+            <faultstring>Verification service temporarily unavailable</faultstring>
+            <detail>
+                <ver:PartnerFault>
+                    <ver:code>VERIFICATION_UNAVAILABLE</ver:code>
+                    <ver:message>Retry later; no verification decision was made.</ver:message>
+                    <ver:correlationId>corr-2026-0142</ver:correlationId>
+                </ver:PartnerFault>
+            </detail>
+        </soapenv:Fault>
+    </soapenv:Body>
+
+</soapenv:Envelope>
+```
