@@ -1,0 +1,24 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+
+    <soapenv:Header/>
+
+    <soapenv:Body>
+        <soapenv:Fault>
+            <faultcode>soapenv:Server</faultcode>
+            <faultstring>Claim verification service unavailable</faultstring>
+
+            <detail>
+                <VerificationError>
+                    <errorCode>CLAIM_VERIFICATION_UNAVAILABLE</errorCode>
+                    <message>The external verification partner is currently unavailable. Please try again later.</message>
+                    <claimReference>CLM-2026-001</claimReference>
+                </VerificationError>
+            </detail>
+        </soapenv:Fault>
+    </soapenv:Body>
+
+</soapenv:Envelope>

@@ -1,0 +1,140 @@
+# CampusFind Assignment 4 — HTTP Test Transcript
+
+## 1. Create a Claim — 201 Created
+
+**Request:**
+
+```http
+POST http://localhost:5004/claims
+Content-Type: application/json
+Idempotency-Key: demo-claim-001
+
+{
+  "item_id": 1,
+  "claimant_id": 1,
+  "message": "I am claiming the HP laptop."
+}
+```
+
+**Actual Response:**
+
+```http
+HTTP/1.1 201 CREATED
+Location: http://localhost:5004/claims/1
+Content-Type: application/json
+```
+
+```json
+{
+  "claimant_id": 1,
+  "id": 1,
+  "item_id": 1,
+  "message": "I am claiming the HP laptop.",
+  "status": "pending"
+}
+```
+
+**Result:** PASS — Claim created successfully with HTTP 201 and a Location header.
+
+---
+
+## 2. Repeat the Same Request — Idempotency Test
+
+**Request:**
+
+```http
+POST http://localhost:5004/claims
+Content-Type: application/json
+Idempotency-Key: demo-claim-001
+```
+
+The same JSON request body was submitted again.
+
+**Actual Response:**
+
+```http
+HTTP/1.1 201 CREATED
+Location: http://localhost:5004/claims/1
+```
+
+```json
+{
+  "claimant_id": 1,
+  "id": 1,
+  "item_id": 1,
+  "message": "I am claiming the HP laptop.",
+  "status": "pending"
+}
+```
+
+**Result:** PASS — The original claim (ID 1) was returned. No duplicate claim was created.
+
+---
+
+## 3. Submit a Malformed Request — 400 Bad Request
+
+**Request:**
+
+```http
+POST http://localhost:5004/claims
+Content-Type: application/json
+Idempotency-Key: demo-claim-002
+
+{}
+```
+
+**Actual Response:**
+
+```http
+HTTP/1.1 400 BAD REQUEST
+Content-Type: application/problem+json
+```
+
+```json
+{
+  "detail": "item_id must be a positive integer",
+  "status": 400,
+  "title": "Bad Request",
+  "type": "about:blank"
+}
+```
+
+**Result:** PASS — Invalid request was rejected with HTTP 400 and a Problem Details response.
+
+---
+
+## 4. Request a Non-existent Claim — 404 Not Found
+
+**Request:**
+
+```http
+GET http://localhost:5004/claims/999
+```
+
+**Actual Response Body:**
+
+```json
+{
+  "detail": "Claim not found",
+  "status": 404,
+  "title": "Not Found",
+  "type": "about:blank"
+}
+```
+
+**Result:** PASS — The API correctly returned HTTP 404 for an unknown claim.
+
+---
+
+## Summary
+
+| Test | Expected Status | Actual Status | Result |
+|---|---:|---:|---|
+| Create claim | 201 | 201 | PASS |
+| Repeat idempotent request | 201 | 201 | PASS |
+| Malformed request | 400 | 400 | PASS |
+| Unknown claim | 404 | 404 | PASS |
+
+All four manually demonstrated HTTP scenarios behaved as expected.
+
+Automated test suite: **6/6 tests passed**.

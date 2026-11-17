@@ -1,0 +1,24 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:ver="https://verification.partner.example/wsdl">
+
+    <soapenv:Header>
+        <ver:PartnerCredentials>
+            <ver:partnerId>CAMPUSFIND_TEAM_5</ver:partnerId>
+            <ver:apiKey>REPLACE_WITH_PARTNER_API_KEY</ver:apiKey>
+        </ver:PartnerCredentials>
+    </soapenv:Header>
+
+    <soapenv:Body>
+        <ver:VerifyClaimRequest>
+            <ver:claimReference>CLM-2026-001</ver:claimReference>
+            <ver:itemDescription>Black HP laptop reported as lost in the campus library</ver:itemDescription>
+            <ver:claimantName>Rahul Sharma</ver:claimantName>
+            <ver:evidenceReference>EV-2026-045</ver:evidenceReference>
+        </ver:VerifyClaimRequest>
+    </soapenv:Body>
+
+</soapenv:Envelope>

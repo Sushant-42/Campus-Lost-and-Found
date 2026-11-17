@@ -1,0 +1,105 @@
+* Host jsonplaceholder.typicode.com:443 was resolved.
+* IPv6: (none)
+* IPv4: 104.21.59.19, 172.67.167.151
+*   Trying 104.21.59.19:443...
+* schannel: disabled automatic use of client certificate
+* ALPN: curl offers http/1.1
+* ALPN: server accepted http/1.1
+* Established connection to jsonplaceholder.typicode.com (104.21.59.19 port 443) from 192.168.1.46 port 49383 
+* using HTTP/1.x
+> GET /posts/1/comments HTTP/1.1
+> Host: jsonplaceholder.typicode.com
+> User-Agent: curl/8.21.0
+> Accept: */*
+> 
+* Request completely sent off
+* schannel: remote party requests renegotiation
+* schannel: renegotiating SSL/TLS connection
+* schannel: SSL/TLS connection renegotiated
+< HTTP/1.1 200 OK
+< Date: Tue, 13 Oct 2026 09:48:17 GMT
+< Content-Type: application/json; charset=utf-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< access-control-allow-credentials: true
+< Cache-Control: max-age=43200
+< Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=mzZVh9dVtktgWEKwVjFRvKE8NM20zt7LXYCNxVH3DanaFc9JnLX1zqygoZxQ5JoJuKqA%2F2VfVCq3H%2BTy5u7guIn0yeGNrsKnCDwXCLYz5CccGhSiWKpPBSYB%2FavADSSj1dmhQxPpgV%2F0Zk5tXH7W"}]}
+< etag: W/"5e6-4bSPS5tq8F8ZDeFJULWh6upjp7U"
+< expires: -1
+< pragma: no-cache
+< vary: Origin, Accept-Encoding
+< x-content-type-options: nosniff
+< x-powered-by: Express
+< x-ratelimit-limit: 3600000
+< x-ratelimit-remaining: 3599999
+< x-ratelimit-reset: 1790812826
+< Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+< Age: 9856
+< cf-cache-status: HIT
+< Server: cloudflare
+< CF-RAY: a49d6d82d90f5e3f-MRS
+< alt-svc: h3=":443"; ma=86400
+< 
+{ [1522 bytes data]
+* Connection #0 to host jsonplaceholder.typicode.com:443 left intact
+HTTP/1.1 200 OK
+Date: Tue, 13 Oct 2026 09:48:17 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+access-control-allow-credentials: true
+Cache-Control: max-age=43200
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=mzZVh9dVtktgWEKwVjFRvKE8NM20zt7LXYCNxVH3DanaFc9JnLX1zqygoZxQ5JoJuKqA%2F2VfVCq3H%2BTy5u7guIn0yeGNrsKnCDwXCLYz5CccGhSiWKpPBSYB%2FavADSSj1dmhQxPpgV%2F0Zk5tXH7W"}]}
+etag: W/"5e6-4bSPS5tq8F8ZDeFJULWh6upjp7U"
+expires: -1
+pragma: no-cache
+vary: Origin, Accept-Encoding
+x-content-type-options: nosniff
+x-powered-by: Express
+x-ratelimit-limit: 3600000
+x-ratelimit-remaining: 3599999
+x-ratelimit-reset: 1790812826
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+Age: 9856
+cf-cache-status: HIT
+Server: cloudflare
+CF-RAY: a49d6d82d90f5e3f-MRS
+alt-svc: h3=":443"; ma=86400
+
+[
+  {
+    "postId": 1,
+    "id": 1,
+    "name": "id labore ex et quam laborum",
+    "email": "Eliseo@gardner.biz",
+    "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\ntempora quo necessitatibus\ndolor quam autem quasi\nreiciendis et nam sapiente accusantium"
+  },
+  {
+    "postId": 1,
+    "id": 2,
+    "name": "quo vero reiciendis velit similique earum",
+    "email": "Jayne_Kuhic@sydney.com",
+    "body": "est natus enim nihil est dolore omnis voluptatem numquam\net omnis occaecati quod ullam at\nvoluptatem error expedita pariatur\nnihil sint nostrum voluptatem reiciendis et"
+  },
+  {
+    "postId": 1,
+    "id": 3,
+    "name": "odio adipisci rerum aut animi",
+    "email": "Nikita@garfield.biz",
+    "body": "quia molestiae reprehenderit quasi aspernatur\naut expedita occaecati aliquam eveniet laudantium\nomnis quibusdam delectus saepe quia accusamus maiores nam est\ncum et ducimus et vero voluptates excepturi deleniti ratione"
+  },
+  {
+    "postId": 1,
+    "id": 4,
+    "name": "alias odio sit",
+    "email": "Lew@alysha.tv",
+    "body": "non et atque\noccaecati deserunt quas accusantium unde odit nobis qui voluptatem\nquia voluptas consequuntur itaque dolor\net qui rerum deleniti ut occaecati"
+  },
+  {
+    "postId": 1,
+    "id": 5,
+    "name": "vero eaque aliquid doloribus et culpa",
+    "email": "Hayden@althea.biz",
+    "body": "harum non quasi et ratione\ntempore iure ex voluptates in ratione\nharum architecto fugit inventore cupiditate\nvoluptates magni quo et"
+  }
+]

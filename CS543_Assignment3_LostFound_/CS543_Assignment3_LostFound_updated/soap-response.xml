@@ -1,0 +1,18 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:ver="https://verification.partner.example/wsdl">
+
+    <soapenv:Header/>
+
+    <soapenv:Body>
+        <ver:VerifyClaimResponse>
+            <ver:verificationStatus>VERIFIED</ver:verificationStatus>
+            <ver:verificationReference>VRF-2026-001</ver:verificationReference>
+            <ver:reason>Claim details successfully verified by the external partner.</ver:reason>
+        </ver:VerifyClaimResponse>
+    </soapenv:Body>
+
+</soapenv:Envelope>

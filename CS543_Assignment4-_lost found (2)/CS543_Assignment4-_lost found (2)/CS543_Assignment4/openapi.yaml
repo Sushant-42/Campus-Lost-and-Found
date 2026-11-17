@@ -1,0 +1,250 @@
+
+openapi: 3.0.3
+
+info:
+  title: CampusFind Claims and Verification API
+  description: REST API for submitting, retrieving, filtering and cancelling lost-and-found claims.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+
+paths:
+
+  /claims:
+    get:
+      summary: List claims
+      operationId: listClaims
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: Filter claims by status
+          schema:
+            type: string
+            enum: [pending, approved, rejected, cancelled]
+      responses:
+        '200':
+          description: Claims retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Submit a new claim
+      operationId: createClaim
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimInput'
+      responses:
+        '201':
+          description: Claim created successfully
+          headers:
+            Location:
+              description: URL of the newly created claim
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /claims/{claimId}:
+    parameters:
+      - name: claimId
+        in: path
+        required: true
+        description: Unique claim identifier
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Retrieve a claim
+      operationId: getClaim
+      responses:
+        '200':
+          description: Claim retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /claims/{claimId}/cancellation:
+    post:
+      summary: Cancel a pending claim
+      operationId: cancelClaim
+      parameters:
+        - name: claimId
+          in: path
+          required: true
+          description: Unique claim identifier
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Claim cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Unique key that prevents duplicate claim creation during retries.
+      schema:
+        type: string
+        minLength: 1
+
+  schemas:
+
+    ClaimInput:
+      type: object
+      required:
+        - item_id
+        - claimant_id
+        - message
+      properties:
+        item_id:
+          type: integer
+          minimum: 1
+          example: 25
+        claimant_id:
+          type: integer
+          minimum: 1
+          example: 12
+        message:
+          type: string
+          minLength: 1
+          example: I lost this item near the library.
+
+    Claim:
+      type: object
+      required:
+        - id
+        - item_id
+        - claimant_id
+        - message
+        - status
+      properties:
+        id:
+          type: integer
+          example: 101
+        item_id:
+          type: integer
+          example: 25
+        claimant_id:
+          type: integer
+          example: 12
+        message:
+          type: string
+          example: I lost this item near the library.
+        status:
+          type: string
+          enum: [pending, approved, rejected, cancelled]
+          example: pending
+
+    ClaimList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Claim'
+
+    Problem:
+      type: object
+      required:
+        - type
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          example: about:blank
+        title:
+          type: string
+          example: Resource Not Found
+        status:
+          type: integer
+          example: 404
+        detail:
+          type: string
+          example: The requested claim does not exist.
+
+  responses:
+    BadRequest:
+      description: Malformed or invalid request body
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    NotFound:
+      description: Requested claim does not exist
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Conflict:
+      description: Claim state conflict or duplicate operation
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    UnprocessableEntity:
+      description: Request is valid but cannot be processed
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    InternalServerError:
+      description: Unexpected server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    ServiceUnavailable:
+      description: Required external service is unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
